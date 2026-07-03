@@ -36,6 +36,8 @@ core/agents/       role agents — frontmatter: name, description, tools only
 core/pipelines/    multi-agent workflows wiring the roles
 core/templates/    fill-in artifacts copied to hosts
 install/           idempotent, never-overwrite installers (ps1 + sh, feature parity)
+skills/            user-level skills distributed to ~/.claude/skills (outside the
+                   agnosticism gate: they may name stacks as DETECTION SIGNALS only)
 ```
 
 - Agent frontmatter stays minimal (`name`, `description`, `tools`) for maximum

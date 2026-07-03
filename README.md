@@ -56,9 +56,19 @@ core/
 install/
 ├── install.ps1                           ← copy the kit into a host repo (Windows)
 └── install.sh                            ← same (POSIX)
+skills/
+└── genesis/SKILL.md                      ← global /genesis skill: install + auto-fill contract + wire CLAUDE.md
 ```
 
 ## Install into a project
+
+**Recommended — the `/genesis` skill.** Copy `skills/genesis/` to your user-level skills
+directory once (`~/.claude/skills/genesis/`). From then on, in ANY project, run
+`/genesis` as the first command: it locates/fetches this kit, runs the installer,
+**auto-fills the stack contract from repo evidence** (manifests, CI, docs — marked
+`auto-detected — confirm`), wires `CLAUDE.md`, and ends with one batched confirmation.
+
+**Manual — the installers:**
 
 ```powershell
 # Windows
