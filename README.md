@@ -57,16 +57,26 @@ install/
 ├── install.ps1                           ← copy the kit into a host repo (Windows)
 └── install.sh                            ← same (POSIX)
 skills/
-└── genesis/SKILL.md                      ← global /genesis skill: install + auto-fill contract + wire CLAUDE.md
+├── genesis/SKILL.md                      ← global /genesis skill: install + auto-fill contract + wire CLAUDE.md
+├── analyze/SKILL.md                      ← global /analyze skill: extract an existing codebase into Analyze.md (evidence-backed)
+└── usecases/SKILL.md                     ← global /usecases skill: reverse-engineer implemented use cases into UseCases.md
 ```
 
 ## Install into a project
 
-**Recommended — the `/genesis` skill.** Copy `skills/genesis/` to your user-level skills
-directory once (`~/.claude/skills/genesis/`). From then on, in ANY project, run
+**Recommended — the `/genesis` skill.** Copy the folders under `skills/` to your
+user-level skills directory once (`~/.claude/skills/`). From then on, in ANY project, run
 `/genesis` as the first command: it locates/fetches this kit, runs the installer,
 **auto-fills the stack contract from repo evidence** (manifests, CI, docs — marked
 `auto-detected — confirm`), wires `CLAUDE.md`, and ends with one batched confirmation.
+
+**For already-built (brownfield) projects**, `/genesis` additionally runs two sibling
+extraction skills as its final bootstrap step: `/analyze` writes an evidence-backed
+`Analyze.md` (stack, structure, entry points, domain, integrations, patterns, tests,
+gaps — every claim cites a file), then `/usecases` writes `UseCases.md` (the use cases
+the code actually implements, with a coverage table proving no entry point was dropped).
+Both are also standalone skills — re-run them anytime to refresh the docs; `/usecases`
+consumes `/analyze`'s entry-point inventory.
 
 **Manual — the installers:**
 
