@@ -59,7 +59,10 @@ install/
 skills/
 ├── genesis/SKILL.md                      ← global /genesis skill: install + auto-fill contract + wire CLAUDE.md
 ├── analyze/SKILL.md                      ← global /analyze skill: extract an existing codebase into Analyze.md (evidence-backed)
-└── usecases/SKILL.md                     ← global /usecases skill: reverse-engineer implemented use cases into UseCases.md
+├── usecases/SKILL.md                     ← global /usecases skill: reverse-engineer implemented use cases into UseCases.md
+├── agent-in-the-loop/SKILL.md            ← global /agent-in-the-loop skill: parallel scoped delegation with the orchestrator as in-loop reviewer
+├── patron-oro/SKILL.md                   ← global /patron-oro skill: polish 1 → replicate N (gold-pattern content/system methodology)
+└── engram-memory/SKILL.md                ← global /engram-memory skill: persistent cross-session memory protocol (requires the Engram MCP server)
 ```
 
 ## Install into a project
