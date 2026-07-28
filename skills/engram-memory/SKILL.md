@@ -75,5 +75,7 @@ compaction loses nothing that mattered.
 
 - **agent-in-the-loop** — each batch's baselines, outcomes, and FLAGs are saved per
   session so the next batch starts from evidence.
+- **tareas-delegadas** — the anchor map, per-batch baselines and the named integration
+  decisions are saved here, so planning batch N+1 is recall instead of archaeology.
 - **patron-oro** — resolved checklist items leave the living document; their history
   lands here.

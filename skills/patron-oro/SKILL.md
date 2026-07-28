@@ -42,6 +42,31 @@ silently.
    content in it or retire the generator. Never leave quality only in the generated
    artifact.
 
+## The tolerant catalog and the replacement contract
+
+Requirement 1 ("adding a replica = ZERO code") only holds if the engine resolves content by
+**convention**, not by registration. The shape that has survived contact:
+
+1. **Resolve by id/path convention** — `thing(kind, id)` maps to a well-known location. Adding
+   content is dropping a correctly-named file; there is no registry to edit, so there is no
+   registry to forget.
+2. **Tolerate absence** — a missing id returns a safe null/default and warns **once**, never
+   crashes. Half-authored content must not take the system down, or nobody will author.
+3. **Fall back down a chain** — explicit id → convention for its category → neutral default.
+   This is what lets a catalog ship 5% authored and 95% generic without looking broken.
+4. **Synthesize the placeholder** — where the real asset is missing, generate something
+   functional (a procedural stand-in, a synthetic tone, a greybox). A placeholder that *works*
+   keeps the system testable and playable before the specialist arrives; an empty slot does not.
+5. **Guarantee 1:1 replacement by id** — the final asset drops in at the declared id and replaces
+   the placeholder with **zero code changes**.
+
+Point 5 is what makes a scope boundary honest when the engine is in and the finished asset is
+out: the exclusion is not "this is missing forever", it is "this slot is spoken for, and the
+contract to fill it is written down". State it explicitly whenever you defer a whole asset class.
+
+The mold's regression test (step 4) asserts **the ids actually resolve**, not merely that the
+code runs — the gold exemplar's whole chain is wired, end to end, every id present.
+
 ## Translation beyond games
 
 - **Entities/CRUD**: one gold model (validations, migration, serialization,
@@ -66,5 +91,8 @@ silently.
 
 - **agent-in-the-loop** — pilot ONE scope to gold, then batch-replicate the shape with
   parallel agents; the reviewer enforces the mold's bar on every replica.
+- **tareas-delegadas** — inside a delegated scope, the deliverable is the whole triad: the
+  generic engine, ONE gold exemplar, and the tolerant fallback. A scope that ships only the
+  mechanism leaves a catalog nobody can fill; one that ships only content leaves no engine.
 - **engram-memory** — resolved checklist items leave the living document; their history
   is saved to persistent memory.
