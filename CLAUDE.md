@@ -44,6 +44,23 @@ skills/            user-level skills distributed to ~/.claude/skills (outside th
   Claude Code compatibility across versions and hosts. No `model`, no `skills:` refs.
 - Both installers must keep feature parity — a change to one edits the other in the same commit.
 
+## Skills contract
+
+`skills/` ships **user-level** skills, copied by hand to `~/.claude/skills/`. The installers
+do not touch them — they only populate a host's `.claude/`. Say so wherever the README or a
+skill implies otherwise.
+
+- **Frontmatter is `name` + `description` only.** The description is all the model sees
+  before loading the skill, so it carries the trigger phrases — including the Spanish ones
+  the user actually types.
+- **One SKILL.md until it stops fitting.** When a skill grows payloads an agent shouldn't
+  read up front (role prompts, copyable templates), split them into `references/` and cite
+  them by relative path from SKILL.md. Progressive disclosure — never an omnibus file.
+- **Stacks appear as DETECTION SIGNALS only** — evidence used to recognize a host's stack,
+  never an instruction to use one. This is the sole relaxation of the agnosticism gate.
+- **"Composes with" is mutual.** If skill A claims composition with B, B names A back.
+  A one-way claim means one of the two files was updated and the other forgotten.
+
 ## Verification before "done"
 
 - Grep `core/` for stack vocabulary after editing (the agnosticism gate above).

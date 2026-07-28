@@ -1,9 +1,9 @@
 # claude-base-kit
 
 > A portable, **stack-agnostic** knowledge kit for Claude Code: role agents, governance
-> principles, an SDLC pipeline, and templates that work in ANY project — a .NET solution,
-> a Node.js/Next.js app, a Godot game, a Python service. The kit knows *how to work*;
-> the host project tells it *what the stack is*.
+> principles, an SDLC pipeline, templates, and a set of global skills that work in ANY
+> project — a .NET solution, a Node.js/Next.js app, a Godot game, a Python service.
+> The kit knows *how to work*; the host project tells it *what the stack is*.
 
 ## The idea in one paragraph
 
@@ -60,10 +60,18 @@ skills/
 ├── genesis/SKILL.md                      ← global /genesis skill: install + auto-fill contract + wire CLAUDE.md
 ├── analyze/SKILL.md                      ← global /analyze skill: extract an existing codebase into Analyze.md (evidence-backed)
 ├── usecases/SKILL.md                     ← global /usecases skill: reverse-engineer implemented use cases into UseCases.md
-├── agent-in-the-loop/SKILL.md            ← global /agent-in-the-loop skill: parallel scoped delegation with the orchestrator as in-loop reviewer
+├── agent-in-the-loop/SKILL.md            ← global /agent-in-the-loop skill: the delegation LOOP — adversarial review, independent verification, re-dispatch
 ├── patron-oro/SKILL.md                   ← global /patron-oro skill: polish 1 → replicate N (gold-pattern content/system methodology)
-└── engram-memory/SKILL.md                ← global /engram-memory skill: persistent cross-session memory protocol (requires the Engram MCP server)
+├── engram-memory/SKILL.md                ← global /engram-memory skill: persistent cross-session memory protocol (requires the Engram MCP server)
+└── tareas-delegadas/                     ← global /tareas-delegadas skill: backlog → bounded scopes → parallel batch execution
+    ├── SKILL.md                          ← the 0-6 phase pipeline (anchor map → filtering → scopes → batches → status ledger)
+    └── references/                       ← agents.md (role prompts + structured report) + templates.md (scopes-document template)
 ```
+
+The skills are **user-level**, not host-level: the installers never touch them. Copy the
+folders under `skills/` to `~/.claude/skills/` once and they are available in every project,
+kit-installed or not. Three of them form one delegation loop — see
+[Delegating work in parallel batches](#delegating-work-in-parallel-batches).
 
 ## Install into a project
 
@@ -109,6 +117,34 @@ Then, in the host project:
 
 Re-run the installer: new kit files are added, existing host files are untouched. Review the
 skip list it prints — a skipped file means the host has a local override, which is intentional.
+
+## Delegating work in parallel batches
+
+Three skills compose into one loop for running a backlog through parallel agents. They are
+stack-agnostic and need no kit install — only the skills folder.
+
+1. **`/tareas-delegadas` — plan and run the batch.** Reconnaissance first: it writes an
+   **anchor map** (the exact `file:line` where each system lives, the existing subsystem a
+   change should mirror, the reference test that shows how it is tested) and records a
+   **baseline including pre-existing failures**. Then backlog → bounded scopes → batches of
+   3-5 mutually independent scopes → one implementer agent per scope in an isolated worktree
+   → adversarial review → integration on the batch branch.
+2. **`/agent-in-the-loop` — decide and close.** Whether delegating is worth it at all, and
+   the discipline that ends a batch: the orchestrator refutes each worker claim with its own
+   evidence and re-dispatches whatever fails, looping until a review pass comes back **dry**.
+   Worker prose is never relayed to the user unverified.
+3. **`/patron-oro` — shape what one scope delivers.** Generic engine + ONE genuinely polished
+   exemplar + a tolerant fallback for missing data, so every following scope is pure data.
+
+Two conventions make the loop hold under parallelism:
+
+- **Green means no new red versus the baseline**, not N/N — a repo with known-flaky tests is
+  still delegatable, because every claim is a delta each worker measures from its own HEAD.
+- **Scopes that need each other still parallelize** through a *defensive seam*: the consumer
+  reads the producer's contribution through an optional lookup and behaves sensibly when it is
+  absent, documented in both scopes. Either landing order then works.
+
+A batch ends green **on its own branch**. Merging is always the user's explicit decision.
 
 ## Contributing knowledge back (upstream)
 
