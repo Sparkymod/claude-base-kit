@@ -3,57 +3,83 @@ name: engram-memory
 description: "Persistent cross-session memory protocol over the Engram MCP server: session lifecycle (start → save proactively → summarize → end), PROJECT_NAME/SESSION_ID derivation, workspace discovery into an architecture baseline, structured What/Why/Where/Learned observations, topic-key upserts, a quality filter for what must never be saved, conflict handling when memory disagrees with the code, and progressive disclosure for token-efficient recall. Use at session start, after significant work (decisions, bugfixes, discoveries), after a context compaction, or when the user asks to remember or recall something — triggers: /engram-memory, 'guarda en memoria', 'qué recuerdas de', 'recupera el contexto', 'save this to memory'."
 ---
 
-# engram-memory — persistent memory protocol (Engram MCP)
+# Engram Persistent Memory
 
-**Requires** the `engram` MCP server connected to the session (tools named `mem_*`).
-If the tools are absent, say so and skip — never fake a save, and never invent a `mem_*`
-tool that this environment does not actually expose.
+You have access to **Engram** persistent memory via MCP tools. This memory persists across ALL projects, sessions, and conversations.
 
-Memory persists across ALL projects, sessions, and conversations. The protocol below is
-what makes it useful instead of a junk drawer: every observation is attributed to a
-project + session, structured, filtered for signal, and deduplicated via topic keys.
+**Requires** the `engram` MCP server connected to the session (tools named `mem_*`). If those tools are absent, say so and skip — never fake a save. Do not invent unavailable tools: use only the Engram MCP tools actually available in the current environment.
 
-## Session variables (derive ONCE per conversation)
+## CRITICAL — Session Variables
 
-- **PROJECT_NAME** = the workspace folder name (e.g. workspace `…/repos/Admin-panel`
-  → `Admin-panel`).
-- **SESSION_ID** = `{PROJECT_NAME}-{YYYY-MM-DD}` (e.g. `Admin-panel-2026-03-16`).
+At the start of EVERY conversation, derive these two values and use them in ALL Engram tool calls:
 
-Pass `project` and `session_id` to EVERY `mem_save`, `mem_session_summary`,
-`mem_save_prompt`, and `mem_capture_passive` call. Omitting them strands the observation
-in a "manual-save" bucket disconnected from the project's timeline.
+- **PROJECT_NAME**: The workspace folder name, e.g. if workspace is `C:\Users\Rafamod\source\repos\Admin-panel`, then `PROJECT_NAME = "Admin-panel"`
+- **SESSION_ID**: `{PROJECT_NAME}-{YYYY-MM-DD}`, e.g. `Admin-panel-2026-03-16`
 
-`scope` is a separate axis from `project`: `project` for codebase-bound facts
-(architecture, decisions, bugs, commands, setup, conventions, domain logic), `personal`
-only for cross-project preferences, habits, reusable workflows, global environment notes.
+**You MUST pass `project` and `session_id` to EVERY `mem_save`, `mem_session_summary`, `mem_save_prompt`, and `mem_capture_passive` call.** If you omit them, observations go to a "manual-save" bucket and are NOT linked to the project session.
 
-## Lifecycle
+Use:
+- `scope: "project"` for codebase-specific facts, architecture, decisions, bugs, commands, setup, conventions, and domain logic.
+- `scope: "personal"` only for cross-project user preferences, developer habits, reusable workflows, or global environment notes.
 
-**On session start**
-1. `mem_session_start` with `id=SESSION_ID`, `project=PROJECT_NAME`, `directory=<path>`.
-2. `mem_context` with `project=PROJECT_NAME` — recover where the last session left off.
-3. `mem_search` with keywords of the current task and `project=PROJECT_NAME`.
+## Automatic Behavior
 
-Never start cold on a task that may have prior context.
+### On Session Start
+1. Derive `PROJECT_NAME` from the workspace folder name.
+2. Derive `SESSION_ID` as `{PROJECT_NAME}-{YYYY-MM-DD}`.
+3. Call `mem_session_start` with `id=SESSION_ID`, `project=PROJECT_NAME`, `directory=<workspace path>`.
+4. Call `mem_context` with `project=PROJECT_NAME` to recover previous session state.
+5. Call `mem_search` with keywords related to the current task and `project=PROJECT_NAME`.
 
-**During work — save proactively, don't wait to be asked.** Call `mem_save` right after:
-architectural decisions and their tradeoffs, bugfixes (root cause + fix), non-obvious
-discoveries or gotchas, new conventions, config/environment changes, and domain logic
-(business rules, workflows, invariants, permissions, edge cases). Always include `type`
-(one of `decision`, `architecture`, `bugfix`, `pattern`, `config`, `discovery`,
-`learning`) and `scope`. Structure the content:
+Never start cold if the task may have prior context.
 
+## Workspace Discovery
+
+Before making implementation decisions in a project, inspect the repository enough to avoid assumptions.
+
+Check relevant files when present — these are recognition signals, not a required stack:
+
+- Manifests and dependencies: `package.json`, `.csproj`/`*.sln`, `angular.json`, `nx.json`, `pom.xml`, `requirements.txt`, `pyproject.toml`, `go.mod`, `Cargo.toml`
+- Build and tooling config: `tsconfig.json`, `next.config.*`, `vite.config.*`, `.github/workflows`, Azure DevOps pipeline files
+- Infrastructure and environment: `docker-compose.*`, `appsettings*.json`, `.env.example`, deployment config
+- Architecture signals: folder structure, naming conventions, state management, API patterns, data access style, test structure
+
+After discovering durable stack or architecture facts, save/update an architecture baseline:
+
+1. Call `mem_suggest_topic_key` for a topic like `architecture_baseline`.
+2. Call `mem_save` with the suggested `topic_key`, `type: "architecture"`, `scope: "project"`, `project=PROJECT_NAME`, and `session_id=SESSION_ID`.
+
+This baseline should be concise and should describe the current reality of the repo, not guesses.
+
+## During Work — Save Proactively
+
+Call `mem_save` immediately after significant work. **ALWAYS include these parameters**:
+- `session_id`: the SESSION_ID from above
+- `project`: the PROJECT_NAME from above
+- `type`: one of `decision`, `architecture`, `bugfix`, `pattern`, `config`, `discovery`, `learning`
+- `scope`: `"project"` for project-specific, `"personal"` for cross-project
+
+Save after:
+- **Decisions**: Architecture choices, technology selections, design patterns adopted
+- **Bugfixes**: Root cause analysis, non-obvious fixes, workarounds
+- **Discoveries**: Patterns, gotchas, user preferences, environment quirks
+- **Config changes**: Build configs, environment variables, tool settings
+- **Architecture baselines**: stack, frameworks, database/provider, deployment model, repo structure
+- **Domain logic**: business rules, workflows, invariants, permissions, edge cases
+
+Use structured content format:
 ```
-**What**: [what was done]
-**Why**: [the reasoning or problem that drove it]
-**Where**: [files/modules affected]
-**Learned**: [gotchas, edge cases — omit if none]
+What: [brief description]
+Why: [reasoning]
+Where: [files/modules affected]
+Learned: [key takeaway]
 ```
 
+Example call:
 ```
 mem_save(
   title: "Fixed timezone bug in dashboard charts",
-  content: "**What**: …\n**Why**: …\n**Where**: …\n**Learned**: …",
+  content: "What: Fixed UTC date grouping...\nWhy: ...\nWhere: ...\nLearned: ...",
   type: "bugfix",
   session_id: "Admin-panel-2026-03-16",
   project: "Admin-panel",
@@ -61,88 +87,89 @@ mem_save(
 )
 ```
 
-**On session close**
-1. `mem_session_summary` (`session_id`, `project`, content: goal / discoveries /
-   accomplished / next steps / relevant files).
-2. `mem_session_end` with `id=SESSION_ID`.
+### Topic Key Workflow
+For evolving topics, use `mem_suggest_topic_key` first, then `mem_save` with that topic_key. Same topic_key = upsert (updates existing memory instead of creating duplicates).
 
-**After a context reset or compaction** — re-derive the session variables, then
-`mem_context` (`project`) + `mem_search` for the current task, and continue from what
-came back instead of restarting. This is the recovery path; memory exists so compaction
-loses nothing that mattered.
+Use topic keys for:
 
-## Workspace discovery → architecture baseline
+- Architecture baseline
+- Authentication model
+- Deployment process
+- Database/provider conventions
+- Testing strategy
+- Project-specific UI/component patterns
+- Repeated bug classes
 
-Before making implementation decisions in an unfamiliar project, read enough of the repo
-to stop guessing. Look at whatever is present — these are recognition signals, not a
-required stack:
+## Memory Quality Filter
 
-- **Manifests and dependencies** — e.g. `package.json`, `*.sln`/`*.csproj`,
-  `pyproject.toml`, `go.mod`, `Cargo.toml`, `pom.xml`, `Gemfile`, `composer.json`.
-- **Build and tooling config** — the compiler/bundler/test config, and the CI definitions
-  (e.g. `.github/workflows/`, a pipelines file) — these name the real commands.
-- **Infrastructure and environment** — container/compose files, app settings, `.env`
-  examples, deployment manifests.
-- **Architecture signals** — folder structure, naming conventions, state management, API
-  shape, data-access style, test layout.
+Memory should stay high-signal. Save durable knowledge, not noise.
 
-Then persist it once, not per session: `mem_suggest_topic_key` for something like
-`architecture_baseline`, then `mem_save` with that `topic_key`, `type: "architecture"`,
-`scope: "project"`, plus `project` and `session_id`. Keep it concise and describe the
-repo's current reality, never guesses. Later sessions update the same key instead of
-re-deriving the map.
+Always save:
 
-**Evolving topics** — always `mem_suggest_topic_key` first, then `mem_save` with that
-`topic_key`: same key = upsert (the topic stays ONE observation instead of N duplicates).
-Worth a topic key: architecture baseline, authentication model, deployment process,
-data-layer conventions, testing strategy, project UI/component patterns, recurring bug
-classes.
+- Architecture decisions and tradeoffs
+- Framework, database, deployment, and tooling facts
+- Non-obvious bugfixes with root cause
+- Reusable project patterns and conventions
+- Complex domain rules
+- Environment or setup gotchas that would save time later
+- User preferences that apply across projects, using `scope: "personal"`
 
-## Quality filter — what earns a memory
+Never save:
 
-Memory stays useful only while it stays high-signal.
+- Secrets, tokens, passwords, private keys, or connection strings
+- Full code dumps or large raw files
+- Temporary command output with no lasting value
+- Speculation stated as fact
+- Simple syntax mistakes unless they reveal a reusable gotcha
+- Large JSON payloads unless summarized into durable knowledge
+- One-off status updates like "tests failed on step 3" without root cause
 
-**Save**: architecture decisions and tradeoffs · stack, data-layer, deployment and
-tooling facts · non-obvious bugfixes *with root cause* · reusable patterns and
-conventions · complex domain rules · environment/setup gotchas that will cost time again
-· cross-project user preferences (as `scope: "personal"`).
+Also skip what the repo already records (code structure, git history) — memory is for the non-obvious: decisions, reasons, gotchas, preferences.
 
-**Never save**: secrets, tokens, passwords, keys, connection strings · code dumps or
-whole files · command output with no lasting value · speculation stated as fact · simple
-syntax slips that reveal no reusable gotcha · large payloads that were never distilled ·
-status lines like "tests failed on step 3" without the root cause.
+If saving a secret-related discovery, save only the mechanism, location pattern, or vault/config name. Never save the secret value.
 
-For a secret-adjacent discovery, save the **mechanism, location pattern, or vault/config
-name** — never the value.
+## Conflict Handling
 
-## Conflict handling — the code wins
+If memory conflicts with the current codebase, the current codebase is authoritative.
 
-When a memory disagrees with the current codebase, the codebase is authoritative.
+When this happens:
 
-1. Verify the repo's current state by reading the relevant files.
-2. `mem_search` the conflicting topic for every observation that carries the stale claim.
-3. `mem_save` the corrected observation under a stable `topic_key` (upsert, not a new
-   duplicate that leaves both versions alive).
-4. Say that the old memory was outdated when a future agent would otherwise trust it.
-5. `mem_delete` only when the old memory is actively harmful, sensitive, or plainly wrong
-   — a superseded-but-harmless memory is history, not garbage.
+1. Verify the current repo state by reading the relevant files.
+2. Search existing memories for the conflicting topic.
+3. Save an updated observation with a stable `topic_key` using `mem_save` (or `mem_update`).
+4. Mention that the previous memory is outdated if that matters for future agents.
+5. Use `mem_delete` only when the old memory is actively harmful or contains sensitive/incorrect information.
 
-## Progressive disclosure (token-efficient recall)
+## On Session Close
 
-1. `mem_search "query"` → compact hits with IDs — start here, always.
-2. `mem_timeline observation_id=N` → what happened around that observation.
-3. `mem_get_observation id=N` → full untruncated content — only when needed.
+Before finishing any conversation:
+1. Call `mem_session_summary` with `session_id=SESSION_ID`, `project=PROJECT_NAME`, and content with: goal, discoveries, accomplished, next steps, relevant files.
+2. Call `mem_session_end` with `id=SESSION_ID`.
 
-## Rules
+## After Context Reset / Compaction
 
-- Check memory BEFORE starting work on a topic that might have prior context.
-- ALWAYS pass `session_id` + `project` to `mem_save` and `mem_session_summary`, and
-  `project` to `mem_context` and task-related `mem_search`.
-- Save proactively — but only durable knowledge (see the quality filter).
-- Save in the language the content is written in; answer the user in their language.
-- Don't save what the repo already records (code structure, git history) — save the
-  non-obvious: decisions, reasons, gotchas, preferences.
-- Current code beats old memory when they disagree; fix the memory the moment you notice.
+If you detect a context reset or compaction:
+1. Re-derive `PROJECT_NAME` and `SESSION_ID`.
+2. Call `mem_context` with `project=PROJECT_NAME` to recover session state.
+3. Call `mem_search` with current task keywords and `project=PROJECT_NAME`.
+4. Continue from recovered context instead of restarting from scratch.
+
+## Progressive Disclosure (Token-Efficient)
+1. `mem_search "query"` → compact results with IDs
+2. `mem_timeline observation_id=N` → what happened before/after
+3. `mem_get_observation id=N` → full untruncated content
+
+## Key Rules
+- Save proactively, but only durable knowledge.
+- ALWAYS pass `session_id` and `project` to `mem_save`.
+- ALWAYS pass `session_id` and `project` to `mem_session_summary`.
+- ALWAYS pass `project` to `mem_context` and task-related `mem_search`.
+- Use `scope: "project"` for project-specific memories.
+- Use `scope: "personal"` for cross-project preferences.
+- Answer the user in their language (this operator's default is Spanish).
+- Save memories in the language the content was produced in.
+- Current code beats old memory when they disagree.
+- ALWAYS check memory before starting work on a topic that might have prior context.
 
 ## Composes with
 
