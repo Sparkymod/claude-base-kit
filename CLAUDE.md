@@ -58,6 +58,11 @@ skill implies otherwise.
   them by relative path from SKILL.md. Progressive disclosure — never an omnibus file.
 - **Stacks appear as DETECTION SIGNALS only** — evidence used to recognize a host's stack,
   never an instruction to use one. This is the sole relaxation of the agnosticism gate.
+- **Production-skill exception.** A skill whose deliverable is a media artifact, not host
+  code (today: `motion-aaa`), may ship its own reference toolchain under `scripts/` and name
+  the tools it runs. The toolchain is self-contained, lists its dependencies in SKILL.md,
+  is never copied into a host by the installers, and is verified by running its gold
+  exemplar end to end before committing (quote the measured output).
 - **"Composes with" is mutual.** If skill A claims composition with B, B names A back.
   A one-way claim means one of the two files was updated and the other forgotten.
 

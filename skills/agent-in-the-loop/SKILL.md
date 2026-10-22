@@ -176,6 +176,8 @@ in a table of green checkmarks, so the count is what proves the review happened.
 - **patron-oro** — pilot ONE scope end-to-end to gold level first, then replicate the
   batch shape; the first batch is itself the gold pattern for later batches. Inside a scope:
   generic engine + one gold exemplar + a tolerant fallback for missing data.
+- **motion-aaa** — a long video's blocks are independent scopes: one worker per block on the
+  gold block's shape; the orchestrator inspects every block's stills and event log itself.
 - **engram-memory / persistent memory** — each batch's outcome, baselines, integration decisions
   and flags are saved so the next batch starts from evidence, not archaeology.
 - Base-kit principles when installed: `orchestrator-verification-protocol` (the

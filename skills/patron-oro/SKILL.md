@@ -96,3 +96,6 @@ code runs — the gold exemplar's whole chain is wired, end to end, every id pre
   mechanism leaves a catalog nobody can fill; one that ships only content leaves no engine.
 - **engram-memory** — resolved checklist items leave the living document; their history
   is saved to persistent memory.
+- **motion-aaa** — serial motion pieces are this pattern applied to media: one gold piece
+  (or block) at the AAA bar, an identical-frame regression on the engine, then new pieces
+  as data (new kit + new scenes) on the same engine.

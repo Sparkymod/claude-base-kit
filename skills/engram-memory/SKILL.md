@@ -179,3 +179,5 @@ If you detect a context reset or compaction:
   decisions are saved here, so planning batch N+1 is recall instead of archaeology.
 - **patron-oro** — resolved checklist items leave the living document; their history
   lands here.
+- **motion-aaa** — each piece's aesthetic (so the next one never repeats it), measured speech
+  rate, render budget and gotchas are saved here.

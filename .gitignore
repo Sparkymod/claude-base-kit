@@ -8,3 +8,8 @@ Thumbs.db
 
 # Local scratch
 _scratch/
+
+# Python bytecode and motion renders from the motion-aaa scripts
+__pycache__/
+*.pyc
+motion-out/

@@ -63,9 +63,13 @@ skills/
 ├── agent-in-the-loop/SKILL.md            ← global /agent-in-the-loop skill: the delegation LOOP — adversarial review, independent verification, re-dispatch
 ├── patron-oro/SKILL.md                   ← global /patron-oro skill: polish 1 → replicate N (gold-pattern content/system methodology)
 ├── engram-memory/SKILL.md                ← global /engram-memory skill: persistent cross-session memory protocol (requires the Engram MCP server)
-└── tareas-delegadas/                     ← global /tareas-delegadas skill: backlog → bounded scopes → parallel batch execution
-    ├── SKILL.md                          ← the 0-6 phase pipeline (anchor map → filtering → scopes → batches → status ledger)
-    └── references/                       ← agents.md (role prompts + structured report) + templates.md (scopes-document template)
+├── tareas-delegadas/                     ← global /tareas-delegadas skill: backlog → bounded scopes → parallel batch execution
+│   ├── SKILL.md                          ← the 0-6 phase pipeline (anchor map → filtering → scopes → batches → status ledger)
+│   └── references/                       ← agents.md (role prompts + structured report) + templates.md (scopes-document template)
+└── motion-aaa/                           ← global /motion-aaa skill: AAA procedural motion (GIF, shorts, videos ≤ 10 min) directed and rendered by Claude Code
+    ├── SKILL.md                          ← non-negotiables, the 0-10 phase pipeline with gates, AAA bar, scaling to 10 min, delivery package
+    ├── references/                       ← craft-bar.md (checkable AAA rubric) · architecture.md (code shape) · audio.md (voice, music, SFX, mix) · formats-and-delivery.md
+    └── scripts/                          ← reference toolchain: motion_core.py · audio_core.py · example_gold.py (gold exemplar) · validate.py
 ```
 
 The skills are **user-level**, not host-level: the installers never touch them. Copy the
@@ -145,6 +149,36 @@ Two conventions make the loop hold under parallelism:
   absent, documented in both scopes. Either landing order then works.
 
 A batch ends green **on its own branch**. Merging is always the user's explicit decision.
+
+## Creating motion with Claude Code
+
+`/motion-aaa` is the kit's way to make animated media with Claude Code and Anthropic models
+alone — no stock footage, no generative video, no paid render service. The model directs
+(dossier → modular script → storyboard anchored to the narration's word timings → per-piece
+aesthetic kit), animates in code (deterministic simulation whose events drive particles,
+badges and sound; easing, anticipation, squash & stretch, follow-through, parallax, light),
+composes procedural music and a −16 LUFS mix, renders in parallel through FFmpeg, and then
+**reviews its own work visually**: it opens contact sheets of frames extracted from the
+delivered file and iterates until the craft bar in `references/craft-bar.md` is met.
+
+| Output | Canvas | Length |
+|---|---|---|
+| GIF | 480–960 px wide | 2–15 s |
+| Short | 1080×1920 | 15–60 s |
+| Long | 1920×1080 | 1–10 min (block engine; each block re-composes as a short) |
+
+It is the one **production skill** in the kit: it ships a self-contained reference toolchain
+(Python + NumPy + Pillow + SciPy + FFmpeg) under `skills/motion-aaa/scripts/`, outside the
+installers — see the production-skill exception in `CLAUDE.md`. Start from the gold exemplar:
+
+```bash
+python ~/.claude/skills/motion-aaa/scripts/example_gold.py --out ./motion-out
+python ~/.claude/skills/motion-aaa/scripts/validate.py ./motion-out/vertical/gold-vertical-v1.mp4
+```
+
+It composes with `/patron-oro` (one gold piece, then pieces as data), `/agent-in-the-loop`
+(one worker per block of a long video, orchestrator reviews the stills) and `/engram-memory`
+(each piece's aesthetic and budgets are remembered so the next one never repeats them).
 
 ## Contributing knowledge back (upstream)
 
