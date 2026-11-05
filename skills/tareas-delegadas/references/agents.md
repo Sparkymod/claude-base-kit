@@ -1,7 +1,9 @@
 # Prompts per agent role
 
-Three roles per batch: **implementer** (one per scope), **adversarial reviewer** (one per branch)
-and **integrator** (one per batch). Fill the `<placeholders>` with real data from the project and
+Three roles per batch: **implementer** (one per scope — never one per subtask), **adversarial
+reviewer** (one per batch, covering every branch; a dedicated one only for security,
+authorization, data-integrity or schema scopes, or an oversized batch diff) and **integrator**
+(one per batch). Fill the `<placeholders>` with real data from the project and
 the scopes document.
 
 **Dispatch all implementers of a batch in a single message**, one agent call per scope, so they
@@ -75,20 +77,21 @@ You work EXCLUSIVELY in the worktree `<worktree-path>` on branch `scope/<ID>`.
 - FOLLOWUPS: what you found and did NOT do (do not implement them).
 ```
 
-## Role 2 — Adversarial reviewer agent (one per scope branch)
+## Role 2 — Adversarial reviewer agent (one per batch)
 
 ```
 You are an adversarial reviewer. You did NOT implement this code and your job is to find problems in it.
-Review branch `scope/<ID>` (diff against `feat/scopes-batch-<N>`) of the <PROJECT> project.
+Review branches <`scope/<ID>`, … — every scope of the batch> (each diff against `feat/scopes-batch-<N>`)
+of the <PROJECT> project. Report findings PER SCOPE.
 
-## The scope that was supposed to be fulfilled
-<paste the scope block>
+## The scopes that were supposed to be fulfilled
+<paste each scope block>
 
 ## Project invariants that must not be violated
 <hard rules, protocol/API contracts, persistence conventions, determinism/authority rules>
 
-## The implementer's report
-<paste it — your job includes checking whether it is TRUE, not just whether the code compiles>
+## The implementers' reports
+<paste each — your job includes checking whether it is TRUE, not just whether the code compiles>
 
 ## What to hunt for (actively, assuming there are bugs)
 1. Is the "done" truly met, or only on the happy path? Edge cases, concurrency, corrupt/legacy
@@ -118,7 +121,7 @@ You are the integrator for batch <N> of the <PROJECT> project. You work on branc
 ## Inputs
 - Scope branches: <list scope/xx-1, scope/xx-2, …>
 - Implementer reports: <paste/attach>
-- Adversarial reviewers' findings: <paste/attach>
+- Adversarial reviewer's findings (per scope): <paste/attach>
 
 ## Your job, in order
 1. Merge the scope branches into `feat/scopes-batch-<N>` (from lowest to highest conflict).

@@ -24,6 +24,10 @@ to re-litigate whether "this time is different".
 | 8 | "The build/test passed, so the work is done" | Passing is necessary, not sufficient. Green output must be quoted AND the change must serve the stated goal. |
 | 9 | "The sub-agent reported success, so it's done" | Self-reporting is a claim, not evidence. See `orchestrator-verification-protocol.md`. |
 | 10 | "This ecosystem usually does it another way" | The stack contract wins over training priors. The host chose its idiom deliberately. See `stack-contract-protocol.md`. |
+| 11 | "Delegating is always the safer choice" | Each dispatch re-pays the start-up context and re-discovers code the orchestrator holds. Quality comes from verification, not agent count. Below the host's threshold, inline is the rule. See `context-economics.md`. |
+
+Rows 1, 3 and 5 defend routing **once the host's threshold requires it**. They never turn
+work below the threshold into a dispatch — that direction is row 11.
 
 ## Host-specific and agent-specific tables
 
@@ -40,3 +44,4 @@ Keep all tables evidence-based: a row enters after the excuse has actually been 
 - `scope-enforcement-protocol.md` — the whitelist mechanism these tables defend
 - `orchestrator-verification-protocol.md` — verification as the antidote to claim-trusting
 - `stack-contract-protocol.md` — row 10's authority chain
+- `context-economics.md` — row 11's cost model and the delegation threshold

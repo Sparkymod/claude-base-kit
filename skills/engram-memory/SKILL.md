@@ -1,6 +1,6 @@
 ---
 name: engram-memory
-description: "Persistent cross-session memory protocol over the Engram MCP server: session lifecycle (start → save proactively → summarize → end), PROJECT_NAME/SESSION_ID derivation, workspace discovery into an architecture baseline, structured What/Why/Where/Learned observations, topic-key upserts, a quality filter for what must never be saved, conflict handling when memory disagrees with the code, and progressive disclosure for token-efficient recall. Use at session start, after significant work (decisions, bugfixes, discoveries), after a context compaction, or when the user asks to remember or recall something — triggers: /engram-memory, 'guarda en memoria', 'qué recuerdas de', 'recupera el contexto', 'save this to memory'."
+description: "Persistent cross-session memory protocol over the Engram MCP server: session lifecycle (start → save → summarize → end), PROJECT_NAME/SESSION_ID derivation, structured What/Why/Where/Learned observations, topic-key upserts, what never to save, memory-vs-code conflicts, token-efficient recall. Use at session start, after significant work, after a compaction, or when asked to remember or recall — triggers: /engram-memory, 'guarda en memoria', 'qué recuerdas de', 'recupera el contexto', 'save this to memory'."
 ---
 
 # Engram Persistent Memory

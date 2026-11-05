@@ -52,7 +52,9 @@ skill implies otherwise.
 
 - **Frontmatter is `name` + `description` only.** The description is all the model sees
   before loading the skill, so it carries the trigger phrases — including the Spanish ones
-  the user actually types.
+  the user actually types. It also rides in every step's catalog, so keep it ≤ ~600
+  characters: one sentence of what it does, then the triggers
+  (`core/principles/context-economics.md` rule 7).
 - **One SKILL.md until it stops fitting.** When a skill grows payloads an agent shouldn't
   read up front (role prompts, copyable templates), split them into `references/` and cite
   them by relative path from SKILL.md. Progressive disclosure — never an omnibus file.

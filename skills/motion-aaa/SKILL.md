@@ -1,6 +1,6 @@
 ---
 name: motion-aaa
-description: "Direct and render AAA-quality procedural motion with Claude Code itself — animated GIFs, vertical shorts and horizontal videos up to 10 minutes — as deterministic code: a per-piece aesthetic kit, a simulation whose events drive both picture and sound, choreography anchored to the narration's word timings, procedural music, a -16 LUFS mix, and QA on frames extracted from the final file that the model inspects with its own eyes. Use for explainer motion, animated diagrams, mechanic demos, motion graphics, social clips and GIFs — triggers: /motion-aaa, 'haz un motion', 'crea un motion', 'animación AAA', 'video animado', 'motion graphics', 'hazme un gif animado', 'video corto animado', 'video largo animado', 'short animado', 'animate this explainer'."
+description: "Direct and render AAA procedural motion as deterministic code — animated GIFs, vertical shorts and horizontal videos up to 10 minutes: a per-piece aesthetic kit, simulation-driven picture and sound, narration-anchored choreography, procedural music, a -16 LUFS mix, and QA on frames of the final file. Triggers: /motion-aaa, 'haz un motion', 'crea un motion', 'animación AAA', 'video animado', 'motion graphics', 'hazme un gif animado', 'video corto animado', 'video largo animado', 'short animado', 'animate this explainer'."
 ---
 
 # Motion AAA — procedural motion directed and rendered by Claude Code

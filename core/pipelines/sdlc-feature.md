@@ -36,6 +36,20 @@ never from implementation code.
   already exist) or 5 (no doc surface) is an orchestrator decision recorded in the
   dispatch, with the rationale.
 
+## Cost-aware execution
+
+Every stage dispatched is a fresh agent re-paying the start-up context
+(`principles/context-economics.md`). So:
+
+- **A stage below the host's delegation threshold runs inline.** The orchestrator writes the
+  stage's artifact itself, to the same artifact contract, and the gate still applies.
+  Recorded like a skip: stage, "inline", rationale.
+- **Stage 4 is one implementer per phase**, not one per subtask of the roadmap. Parallel
+  implementers only for genuinely independent scopes.
+- **One review pass per phase**, over the phase's combined diff — not one reviewer per
+  implementer. Per-scope reviewers only for security, authorization, data-integrity or
+  schema scopes.
+
 ## Gates (between every stage)
 
 ```

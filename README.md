@@ -30,13 +30,14 @@ Nothing exists in two layers at once.
 
 ```
 core/
-├── principles/   8 governance & design principles (the "how we work" layer)
+├── principles/   9 governance & design principles (the "how we work" layer)
 │   ├── stack-contract-protocol.md        ← the portability mechanism (start here)
 │   ├── scope-enforcement-protocol.md     ← hard-scoped agents: whitelist + scripted refusal
 │   ├── rationalization-prevention.md     ← pre-rejected excuses table
 │   ├── orchestrator-verification-protocol.md ← claims are not evidence; two-layer verification
 │   ├── dispatch-status-signals.md        ← STATUS signals + artifact contracts between stages
 │   ├── knowledge-evolution.md            ← lesson → rule → skill ladder; upstream promotion
+│   ├── context-economics.md              ← what agent work costs; delegation threshold, batching, always-loaded budget
 │   ├── core-design-tenets.md             ← interface-first, CQS, contracts, failure classes
 │   └── unix-philosophy.md                ← one thing well, composition, policy/mechanism
 ├── agents/       6 role agents (SDLC stages — no stack vocabulary anywhere)
@@ -132,7 +133,7 @@ stack-agnostic and need no kit install — only the skills folder.
    change should mirror, the reference test that shows how it is tested) and records a
    **baseline including pre-existing failures**. Then backlog → bounded scopes → batches of
    3-5 mutually independent scopes → one implementer agent per scope in an isolated worktree
-   → adversarial review → integration on the batch branch.
+   → one adversarial review pass per batch → integration on the batch branch.
 2. **`/agent-in-the-loop` — decide and close.** Whether delegating is worth it at all, and
    the discipline that ends a batch: the orchestrator refutes each worker claim with its own
    evidence and re-dispatches whatever fails, looping until a review pass comes back **dry**.

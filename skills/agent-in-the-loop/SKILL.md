@@ -33,7 +33,10 @@ This skill is also the decision rubric. **Delegate** when ALL of these hold:
 **Do it inline** when any of these hold: it is one tightly-coupled change; it is
 exploration where each finding reshapes the plan; the handoff cost (explaining context)
 exceeds the work itself; or fewer than 2 scopes survive the autonomy filter. Delegating
-one scope to one agent is fine — the *loop* still applies; only the parallelism goes.
+one scope to one agent is fine only when that scope is large (≥ 5 files, or the host's own
+threshold) — the *loop* still applies; only the parallelism goes. Below that, inline wins:
+every dispatch re-pays the start-up context and re-reads code the orchestrator already holds.
+Same economy inside a batch: **one implementer per scope, never one per subtask** of a scope.
 
 ## Step 1 — Scope the batch
 
@@ -110,9 +113,12 @@ only the wall-clock changes, never the discipline.
 
 When workers report back, the orchestrator becomes the agent in the loop:
 
-- **Adversarial review per branch** — a read-only reviewer (or the orchestrator itself)
-  actively tries to find what is wrong, missing, or out of scope in each branch. Its job
-  is to refute "done", not to confirm it.
+- **Adversarial review, one pass per batch** — a single read-only reviewer (or the
+  orchestrator itself) reads every branch's diff and actively tries to find what is wrong,
+  missing, or out of scope. Its job is to refute "done", not to confirm it. Give a scope its
+  own reviewer only when it touches security, authorization, data integrity or schema, or
+  when the batch diff is too large for one reader — a reviewer per branch multiplies the
+  most expensive dispatches.
 - **Independent verification** — the orchestrator checks each claimed deliverable with
   its OWN tool calls: read the files, re-run the verification commands, compare against
   the scope's done criteria. **A completion report is a claim, not evidence.** If the

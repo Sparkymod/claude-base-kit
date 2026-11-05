@@ -1,6 +1,6 @@
 ---
 name: tareas-delegadas
-description: Turns any project's backlog or "natural next steps" into bounded scopes and executes them with specialist agents in parallel (isolated worktrees + adversarial review + integration + green suite). Use this skill WHENEVER the user asks to "delegate tasks", "create scopes", "split the work among agents", "autonomous agent work", "batch of scopes", "multi-agent mode", or hands over a backlog/plan/pending list asking to plan or execute it in parallel. Also applies when they ask to "run the batch", "review the scopes" or "report batch status" — triggers: /tareas-delegadas, 'delegar tareas', 'crear scopes', 'divide el trabajo entre agentes', 'batch de scopes', 'ejecuta el batch'.
+description: Turns a project's backlog or natural next steps into bounded scopes executed by specialist agents in parallel (isolated worktrees + one adversarial review per batch + integration + green suite). Use when the user asks to delegate tasks, create scopes, split work among agents, run or review a batch, or report batch status, or hands over a backlog to execute in parallel — triggers: /tareas-delegadas, 'delegar tareas', 'crear scopes', 'divide el trabajo entre agentes', 'batch de scopes', 'ejecuta el batch'.
 ---
 
 # Tareas Delegadas — scope-based multi-agent planning and execution
@@ -167,9 +167,11 @@ Per-batch pattern (the prompts for each role are in `references/agents.md`):
    that is what lets batch N+1 build on N before either is merged.
 2. **Implementation:** one implementer agent per scope, in its worktree, with its scope prompt +
    the common contract. Deliverable: commits on `scope/<id>` + full suite green + report.
-3. **Adversarial review:** for each branch, a reviewer agent distinct from the implementer
-   actively hunts for bugs, invariant violations, gaps in the "done", and side effects. It does
-   not fix: it reports findings classified as blocker / medium / low.
+3. **Adversarial review:** ONE reviewer agent per batch, distinct from the implementers, reads
+   every scope branch and actively hunts for bugs, invariant violations, gaps in the "done", and
+   side effects. It does not fix: it reports findings per scope, classified as blocker / medium /
+   low. A scope gets its own reviewer only when it touches security, authorization, data
+   integrity or schema, or when the batch diff is too large for one reader.
 4. **Integration:** an integrator agent merges the scope branches into `feat/scopes-batch-N`,
    applies the fixes for the blocker/medium findings, resolves conflicts, and runs the full
    suite + smokes. *Low* findings may be deferred (document them).

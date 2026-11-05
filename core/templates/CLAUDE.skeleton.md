@@ -14,12 +14,19 @@ SCOPE: {estimated file count} file(s), {complexity tier}
 ACTION: INLINE | DELEGATE → {agent-name}
 ​```
 
-Delegation is REQUIRED when: the task creates/modifies ≥3 files, OR involves
-architecture / design decisions / new features, OR a specialized agent exists for the domain.
+Delegation is REQUIRED when: the task creates/modifies ≥{5} files, OR it splits into ≥2
+independent scopes that will genuinely run in parallel.
+Below that threshold, work INLINE — the main thread already holds the context, and every
+dispatch re-pays it (.claude/principles/context-economics.md). A specialist MAY take a
+bounded task in its domain when its gates add real value; existing is not a reason to dispatch.
 Execute directly (no classification) when: single-file edit ≤{20} lines, typo, rename,
 config toggle, answering a question.
 
-Feature-sized work runs the `sdlc-feature` pipeline (.claude/pipelines/sdlc-feature.md).
+When delegating: one implementer per phase (not per subtask), one review pass per batch
+(not per agent), resume the same agent on re-dispatch.
+
+Feature-sized work runs the `sdlc-feature` pipeline (.claude/pipelines/sdlc-feature.md);
+below the threshold its stages run inline.
 
 # Authority Chain
 
@@ -34,6 +41,7 @@ Feature-sized work runs the `sdlc-feature` pipeline (.claude/pipelines/sdlc-feat
 | 1 | "Faster to do it myself" | Speed is not a routing criterion; quality gates exist for a reason. |
 | 2 | "It's just one small change" | Size is not a criterion; the threshold is objective. |
 | 3 | "The sub-agent said it's done" | Claims are not evidence — verify (orchestrator-verification-protocol). |
+| 4 | "Delegating is always the safer choice" | Each dispatch re-pays the context; below the threshold, inline is the rule (context-economics). |
 
 # Verification Before "Done"
 
@@ -61,5 +69,7 @@ Constraint: only the main thread dispatches agents. Agents cannot spawn agents.
 
 - If the host already HAS a `CLAUDE.md`, merge — don't replace: keep the host's authority
   chain on top, add the classification block and the agent catalog.
-- The classification thresholds (≥3 files, ≤20 lines) are defaults — tune them, but keep
-  them **objective** (countable), or rationalization eats them.
+- The classification thresholds (≥5 files or genuine parallelism, ≤20 lines) are defaults —
+  tune them, but keep them **objective** (countable), or rationalization eats them. Lowering
+  the file threshold multiplies dispatches; measure first (`principles/context-economics.md`).
+- Keep the always-apply rules short: they are re-read on every step of every agent.
